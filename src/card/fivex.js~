@@ -1,0 +1,9 @@
+import React from 'react';
+
+
+export default function fivex(card,h,w){
+    switch(card){
+	
+    }
+    
+}

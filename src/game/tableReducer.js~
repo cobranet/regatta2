@@ -1,0 +1,25 @@
+export const tableReducer = (state=initialTableState,action)=>{
+    console.log(action);
+    const {type, payload} = action;
+    switch(type){
+    case "SELECT_TILE": {
+	const newtiles=state.tiles.map((tile)=>tileReducer(tile,action)); 
+	return Object.assign({},state,{tiles: newtiles});
+    }
+    case "ROTATE_TILE" : {
+	const newtiles=state.tiles.map((tile)=>tileReducer(tile,action)); 
+	return Object.assign({},state,{tiles: newtiles});
+    }
+    case "PLAY_TILE":{
+	// enrich the payload
+	const {tile} = payload;
+	const newAction = Object.assign({},action);
+	const newPayload = Object.assign({},payload);
+	const enrichAction = Object.assign(newAction,{ payload: Object.assign(newPayload,{ x: 2*tile.size+payload.x*tile.size, y: 2*tile.size+payload.y*tile.size })});
+	const newtiles=state.tiles.map((tile)=>tileReducer(tile,enrichAction)); 
+	return Object.assign({},state,{tiles: newtiles});
+    }
+    default:	
+	return state;
+    }
+};

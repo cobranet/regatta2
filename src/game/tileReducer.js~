@@ -1,0 +1,58 @@
+const initialState = {
+    id: 1,
+    x: 40,
+    y :0,
+    angle: 0,
+    size: 40,
+    selected: 0,
+    color:0,
+    old : {
+	id: 1,
+	x: 40,
+	y :0,
+	angle: 0,
+	size: 40,
+	selected: 0,
+	color:0,
+    } 
+}
+const tileReducer = ( state=initialState,action)=> {
+    const {type,payload} = action;
+    switch (type){
+    case "SELECT_TILE":{
+	if (state.id !== payload.tile.id ){
+	    return Object.assign(state,{selected: 0});
+	}
+	if (state.selected === 0){
+	    return Object.assign(state,{selected: 1 ,old: state});
+	} else {
+	    return Object.assign(state,{selected: 0, old: state});
+	}
+    }
+    case "PLAY_TILE": {
+	if ( payload.tile.id !== state.id ){
+	    return state;
+	}
+	return Object.assign({},state,{ selected: 1, x:payload.x ,y: payload.y,old: Object.assign({},state) } );
+    }
+	
+    case "MOVE_TILE": {
+	return Object.assign({},state,{ x:payload.x ,y: payload.y,old: Object.assign({},state) } );
+    }
+    case "ROTATE_TILE": {
+	if (state.id !== payload.tile.id ) {
+	    return state;
+	}
+	let newAngle = payload.tile.angle + 1*payload.rotation;
+	return Object.assign({},state,{  angle: newAngle ,old: Object.assign({},state) } );
+    }
+	
+    default: {
+	return state;
+    }
+    }
+}
+
+export default tileReducer;
+
+

@@ -1,0 +1,105 @@
+import React,{useState,useRef,useEffect} from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import PlayTable from './PlayTable';
+
+const createTiles=(tileSize)=>{
+    let all = [];
+    for (let i=0; i<21; i++){
+	let tileBlack = {
+	    id: i,
+	    x: tileSize * Math.random(tileSize),
+	    y :tileSize * Math.random(tileSize) ,
+	    angle: 0,
+	    size: tileSize,
+	    selected: 0,
+	    color:0,
+	    old : {
+		x: tileSize * Math.random(tileSize),
+		y :tileSize * Math.random(tileSize) ,
+		angle: 1,
+		size: tileSize,
+		selected: 0,
+		color:0,
+	    } 
+	};
+
+	let tileWhite = {
+	    id: i+21,
+	    x: 400 + tileSize * Math.random(tileSize),
+	    y : tileSize * Math.random(tileSize) ,
+	    angle: 1,
+	    size: tileSize,
+	    selected: 0,
+	    color:1,
+	    old : {
+		x: tileSize * Math.random(tileSize),
+		y :tileSize * Math.random(tileSize) ,
+		angle: 1,
+		size: tileSize,
+		selected: 0,
+		color:0,
+	    } 
+	};
+	all.push(tileWhite);
+	all.push(tileBlack);
+    }
+    return all;
+};
+
+
+
+
+const initialTableState = {
+    tiles: createTiles(40) ,
+    size:  8*40,
+    onMove: 0,
+    activeTile: null,
+    mode: "WAIT"
+}
+
+
+const initialState=
+      {  table : [
+	  [null,null,null,null,null,null,null,null],
+	  [null,null,null,null,null,null,null,null],   
+	  [null,null,null,null,null,null,null,null],
+	  [null,null,null,null,null,null,null,null],
+	  [null,null,null,null,null,null,null,null],
+	  [null,null,null,null,null,null,null,null],   
+	  [null,null,null,null,null,null,null,null],
+	  [null,null,null,null,null,null,null,null]
+         ],
+	 black: {},
+	 white: {},
+	 status: 0,
+	 moveMode: "WAIT",
+	 message: "PLACE, PICK OR SLIDE",
+	 move: []
+      };
+
+
+
+const useStyles = makeStyles(theme => ({
+    table: {
+	border: "1px solid green",
+	backgroundColor: "red",
+	flexGrow: 1,
+    }
+    }));
+    
+
+
+function Table(){
+    const classes= useStyles();
+    const lt = initialState.table;
+    
+    return( 
+	    <div>
+	    <PlayTable table={initialTableState}
+	               logictable={initialState.table} />
+	    </div>
+    );
+
+}
+
+export default React.memo(Table);

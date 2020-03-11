@@ -1,0 +1,64 @@
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Avatar from '@material-ui/core/Avatar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import {NavLink } from 'react-router-dom';
+import {  FACEBOOK_AUTH_URL } from '../constants';
+const useStyles = makeStyles(theme => ({
+  root: {
+    flexGrow: 1,
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+  },
+  title: {
+    flexGrow: 1,
+  },
+}));
+
+export default function AppHeaderMU(props) {
+    const classes = useStyles();
+    console.log(props);
+    return (
+	<div className={classes.root}>
+	  <AppBar position="static">
+            <Toolbar>
+              <IconButton href="/"
+                          edge="start"
+			  className={classes.menuButton}
+			  color="inherit"
+			  aria-label="menu">
+		<MenuIcon />
+              </IconButton>
+              <Typography variant="h6" className={classes.title}>
+	        Sequence
+              </Typography>
+	      { props.authenticated ? 
+		<div>
+			<Button component={NavLink}
+				    to="/profile"
+				    color="inherit">
+		<Avatar  alt={props.currentUser.name} src={props.currentUser.imageUrl} />
+			    </Button>
+
+			    <Button onClick={props.onLogout}
+					color="inherit">
+				  Logout
+			    </Button>
+		</div>
+		      :
+		      <Button href={FACEBOOK_AUTH_URL} color="inherit">
+			    
+	    Login with Facebook
+	  </Button>
+	      }
+        </Toolbar>
+      </AppBar>
+    </div>
+  );
+}
