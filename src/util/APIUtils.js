@@ -6,7 +6,6 @@ const request = (options) => {
     })
     
     if(localStorage.getItem(ACCESS_TOKEN)) {
-	console.log(localStorage.getItem(ACCESS_TOKEN));
         headers.append('Authorization', 'Bearer ' + localStorage.getItem(ACCESS_TOKEN))
     }
 
@@ -24,6 +23,21 @@ const request = (options) => {
     );
 };
 
+
+export function sendTileClick(tileId){
+       return request({
+	   url: API_BASE_URL + '/games/click/'+tileId,
+           method: 'GET'
+       });
+}
+
+export function getMyGame(){
+    return request({
+	url: API_BASE_URL + '/games/my',
+        method: 'GET'
+    });
+}
+
 export function getCurrentUser() {
     if(!localStorage.getItem(ACCESS_TOKEN)) {
         return Promise.reject("No access token set.");
@@ -35,21 +49,6 @@ export function getCurrentUser() {
     });
 }
 
-export function createGame(otherUserEmail){
-    return request({
-	url: API_BASE_URL+"/gameCreate",
-	method: 'POST',
-	body: otherUserEmail
-    });
-    
-}
-
-export function getMyGame(){
-    return request({
-	url: API_BASE_URL+"/myGame",
-	method: 'GET'
-    });
-}
 
 export function login(loginRequest) {
     return request({

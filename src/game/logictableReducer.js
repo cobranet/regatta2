@@ -1,7 +1,7 @@
 import {getNewAngle,findTile}  from './helper';
 
 
-const initialState=
+export const initialltState=
       {  table : [
 	  [null,null,null,null,null,null,null,null],
 	  [null,null,null,null,null,null,null,null],   
@@ -23,7 +23,7 @@ const initialState=
 
 
 
-export const logictableReducer =(state=initialState,action)=>{
+export const logictableReducer =(state=initialltState,action)=>{
     const {type,payload} = action;
 
     switch (type ){

@@ -1,8 +1,9 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Paper,Button } from '@material-ui/core';
+import { Paper,Button,Grid } from '@material-ui/core';
 import Tile from './Tile';
 import {  isAllowed } from './helper';
+
 const create_grid_path = (x,y,size)=>{
 	    var d = "M " + x + " " + y + "  " + 
 	    "L "  + x + " " + (y+size) + " " +
@@ -19,6 +20,7 @@ const useStyles = makeStyles(theme => ({
     table: {
 	width: 500,
 	height: 500,
+	backgroundColor: 'darkgray'
     },
     line:{
 	strokeWidth: 1,
@@ -33,18 +35,21 @@ function PlayTable(props){
     const classes=useStyles();
     const {
 	clickTile,
-	logictable,
 	clickTable,
-	table
+	tiles,
+	selectedTileId,
+	table,
+	size
     } = props;
-
-    const tsize = table.size/8;
+    
+    const tsize = size;
     
     
-	return (
+    return (
+	<Grid item>
 	    <svg id="tiles" className={classes.table}  >
-		{ logictable.map((t,i)=> {
-		  return t.map((b,k)=> {
+		{ table.map((t,i)=> {
+		    return t.map((b,k)=> {
 		      return <g key={i*8+k}
 				onClick={()=>clickTable(i,k)}>
 		                <path className={classes.line} key={i*8+k} d={create_grid_path(2*tsize + tsize*i, 2*tsize + tsize*k,tsize)}  />
@@ -53,15 +58,19 @@ function PlayTable(props){
 		  })
 	      }
 
-		  {   table.tiles.map((tile) => 
+		  {   tiles.map((tile) => 
 				      <Tile key={tile.id}
-				            tile ={tile}
+						tile ={tile}
+						clickTile={clickTile}
+						size={size}
+						selected={tile.id === selectedTileId ? 1:0  }
 					    clickTile={clickTile}
 						/>
 				     )
 		  }
 
-		</svg>
+	</svg>
+	    </Grid>
 
 	);
 

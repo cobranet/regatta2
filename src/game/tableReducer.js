@@ -1,13 +1,14 @@
 import tileReducer from './tileReducer';
 
 
-const createTiles=(tileSize)=>{
+
+export const createTiles=(tileSize)=>{
     let all = [];
     for (let i=0; i<21; i++){
 	let tileBlack = {
 	    id: i,
 	    x: tileSize * Math.random(tileSize),
-	    y :tileSize * Math.random(tileSize) ,
+	    y: 300+tileSize * Math.random(tileSize) ,
 	    angle: 0,
 	    size: tileSize,
 	    selected: 0,
@@ -24,8 +25,8 @@ const createTiles=(tileSize)=>{
 
 	let tileWhite = {
 	    id: i+21,
-	    x: 400 + tileSize * Math.random(tileSize),
-	    y : tileSize * Math.random(tileSize) ,
+	    x: 410 + tileSize * Math.random(tileSize),
+	    y : 300+tileSize * Math.random(tileSize) ,
 	    angle: 1,
 	    size: tileSize,
 	    selected: 0,

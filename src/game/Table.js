@@ -1,34 +1,16 @@
-import React,{useState,useReducer} from 'react';
+import React,{useState,useReducer,useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { Grid } from '@material-ui/core';
+import Avatar from '@material-ui/core/Avatar';
 import PlayTable from './PlayTable';
 import tileReducer from './tileReducer';
 import {isAllowed,selectedTile,isAllowedOnTable} from './helper';
-import {logictableReducer} from './logictableReducer';
-import {tableReducer,initialTableState} from './tableReducer';
+import {createTiles,tableReducer,initialTableState} from './tableReducer';
+import {gameReducer} from './gameReducer';
+import {sendTileClick,getMyGame} from '../util/APIUtils';
 
 
 
-
-
-
-const initialState=
-      {  table : [
-	  [null,null,null,null,null,null,null,null],
-	  [null,null,null,null,null,null,null,null],   
-	  [null,null,null,null,null,null,null,null],
-	  [null,null,null,null,null,null,null,null],
-	  [null,null,null,null,null,null,null,null],
-	  [null,null,null,null,null,null,null,null],   
-	  [null,null,null,null,null,null,null,null],
-	  [null,null,null,null,null,null,null,null]
-         ],
-	 black: {},
-	 white: {},
-	 status: 0,
-	 moveMode: "WAIT",
-	 message: "PLACE, PICK OR SLIDE",
-	 move: []
-      };
 
 
 
@@ -36,7 +18,18 @@ const useStyles = makeStyles(theme => ({
     table: {
 	border: "1px solid green",
 	backgroundColor: "red",
-	flexGrow: 1,
+	flexGrow: 0,
+	justify: 'center',
+	padding: '3px',
+	spacing: 2
+    },
+    cent:{
+	border: "2px solid gold"
+    },
+    
+    player:{
+	border: "6px solid blue",
+	justify: 'center',
     }
     }));
     
@@ -45,42 +38,50 @@ const useStyles = makeStyles(theme => ({
 
 function Table(){
     const classes= useStyles();
-    const [table,dispatch]= useReducer(tableReducer,initialTableState);
-    const [lt,dispatchLt] = useReducer(logictableReducer,initialState);
+    const [game,dispatchGame] = useReducer(gameReducer,{loading: true,
+							game: {},
+							error:""
+						       });
 
-    const clickTable=(x,y)=>{
-	const selected = selectedTile(table);
-	if( selected && lt.moveMode === "WAIT" && isAllowedOnTable(x,y,lt.table,selected.angle)  ){
-	    dispatch({type:"PLAY_TILE",payload: {tile:selected, x: x,y:y}});
-	}
-    };
+    useEffect(()=>{
+	getMyGame().then((response)=>
+			 dispatchGame({type:'FETCH_SUCCESS',
+				       payload: response}))
+	    .catch((err)=>
+		   dispatchGame({type:'FETCH_ERROR',
+				 payload: err}));
 
+    },[]);
     
+
     const clickTile=(x,tile)=>{
-	console.log(table);
-	if ( table.mode === "WAIT" && tile.selected === 0 ) {
-	    dispatch({ type:"SELECT_TILE",payload: {tile: tile}});
-	    return;
-	}
-	if ( ["ROTATE" , "WAIT"].includes(lt.moveMode) && tile.selected === 1   ) {
-	    let rotation = 1;
-	    if ( x < tile.x + tile.size / 2 ) {
-		rotation = -1;
-	    }
-	    if( isAllowed(tile,lt.table,rotation)  ) {
-		dispatch({ type: "ROTATE_TILE", payload: {tile: tile,rotation}});
-	    }
-	} 
- };
-
+	alert(tile.id);
+	alert(x);
+	sendTileClick(tile.id).then((response)=>
+			     dispatchGame({type:'TILE_CLICKED',
+					   payload:response}));
+			     
+    };
     
-    return( 
-	    <div>
-	    <PlayTable clickTile={clickTile}
-	               clickTable={clickTable}
-	               table={table}
-	               logictable={initialState.table} />
-	    </div>
+    return(
+	<div>
+	{ game.loading ? <div >Loading</div>:
+	    <Grid container className={classes.table} >
+		  <Grid item xs={2} className={classes.player} >
+		       <Avatar src={game.data.white.imageUrl}/>
+		     </Grid>
+		      <Grid item xs={8} className={classes.cent}>
+			   <PlayTable 	  tiles={game.data.tiles}
+					      table={game.data.table}
+					      selectedTileId={game.data.selectedTileId}
+					      clickTile={clickTile}    
+					  size={40}  />
+	             </Grid>
+			 <Grid item xs={2} className={classes.player}>
+		      <Avatar src={game.data.black.imageUrl}/>
+		</Grid> 
+	    </Grid> }
+	</div>
     );
 
 }

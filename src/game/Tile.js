@@ -12,9 +12,8 @@ const useStyles = makeStyles(theme => ({
 const colors = [ "black","white"];
 const strokes = ["gold", "blue" ];
 
-const createPath=(tile)=>{
+const createPath=(tile,size)=>{
 
-    const {size} = tile;
 
     var d = "M " + 0 + " " + 0 + " " +
 	"C " + (size/3) + " " + (0+2*size/3) + " " +
@@ -30,11 +29,11 @@ const createPath=(tile)=>{
 
 
 
-const getStyle=(tile)=>{
+const getStyle=(tile,selected)=>{
    return {
        fill: colors[tile.color],
        stroke: strokes[tile.color],
-       strokeWidth: tile.selected === 0  ? 1 : 3
+       strokeWidth: selected === 0  ? 1 : 3
    };
 };
 
@@ -63,23 +62,53 @@ const getTranslate=(style,tile)=>{
 
 function GCard(props){
     const classes=useStyles();
-    const {tile,clickTile} = props;
+    const {tile,clickTile,size,selected} = props;
+
+    var old_angle;
+    var old_x;
+    var old_y;
+    
+    var angle;
+    var x;
+    var y;
+
+    if(tile.position.onTable==false){
+	console.log(false);
+	x = 410*tile.color+ size * Math.random(size);
+	y = 300 + size*Math.random(size);
+	angle = tile.color;
+
+	old_x = size * Math.random(size);
+	old_y = tile.color + size*Math.random(size);
+	old_angle = tile.color+1;
+	
+    } else {
+	x = size * Math.random(size);
+	y = 300 + size*Math.random(size);
+	angle = tile.color;
+
+	old_x = size * Math.random(size);
+	old_y = tile.color + size*Math.random(size);
+	old_angle = tile.color+1;
+    }
     return (
 	<Motion
-	  defaultStyle={ {angle: tile.old.angle ,
-	                  x: tile.old.x,
-			  y: tile.old.y,
-	  size: tile.old.size} }
-	  style={ {size: tile.size,angle: spring(tile.angle,springConfigRot),
-		   x: spring(tile.x,springConfig),
-	  y: spring(tile.y,springConfig)  } }
+	  defaultStyle={ {angle: old_angle ,
+	                  x: old_x,
+			  y: old_y,
+	  size: size} }
+	style={ {size: size,
+		 angle: spring(angle,springConfigRot),
+		   x: spring(x,springConfig),
+	  y: spring(y,springConfig)  } }
         >
 	  {style => 
 	      (
-		  <g onClick={(e)=>clickTile(e.nativeEvent.offsetX,tile)} className={classes.g}  
+		  <g onClick={(e)=>clickTile(x-e.nativeEvent.offsetX+size,tile)} className={classes.g}  
 		    transform = {  getTranslate(style) } 
 		    >
-		      <path style={getStyle(tile)} d ={createPath(tile)}  />
+		    <path style={getStyle(tile,selected)}
+			  d ={createPath(tile,size)}  />
 		  </g>    
 	      )
 	  }
